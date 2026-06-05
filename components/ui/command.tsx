@@ -78,16 +78,20 @@ function CommandResponsiveDialog({
   title = "Command Palette",
   description = "Search for a command to run...",
   children,
-  ...props
-}: React.ComponentProps<typeof Dialog> & {
+  open,
+  onOpenChange,
+}: {
   title?: string
   description?: string
+  children: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }) {
   const isMobile = useIsMobile();
 
   if (isMobile) {
     return (
-      <Drawer {...props}>
+      <Drawer open={open} onOpenChange={onOpenChange}>
         <DrawerContent className="overflow-hidden p-0">
           <DrawerHeader className="sr-only">
             <DrawerTitle>{title}</DrawerTitle>
@@ -100,7 +104,7 @@ function CommandResponsiveDialog({
   }
 
   return (
-    <Dialog {...props}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogHeader className="sr-only">
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription>{description}</DialogDescription>
