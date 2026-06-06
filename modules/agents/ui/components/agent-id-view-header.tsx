@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { TrashIcon, PencilIcon, MoreVerticalIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -48,10 +48,8 @@ export const AgentIdViewHeader = ({ agentId, agentName, onEdit, onRemove }: Prop
       </Breadcrumb>
       {/* Without modal={false}, the dialog that this dropdown opens causes the website to get unclickable */}
       <DropdownMenu modal={false}>
-        <DropdownMenuTrigger>
-          <Button variant="ghost">
-            <MoreVerticalIcon />
-          </Button>
+        <DropdownMenuTrigger className={buttonVariants({ variant: "ghost" })}>
+          <MoreVerticalIcon />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={onEdit}>
