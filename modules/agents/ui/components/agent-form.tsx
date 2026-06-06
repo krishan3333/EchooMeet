@@ -37,20 +37,35 @@ export const AgentForm = ({ onSuccess, onCancel, initialValues }: AgentFormProps
     trpc.agents.create.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.agents.getMany.queryOptions({})
+          trpc.agents.getMany.queryOptions({}),
+        );
+        // TODO: Invalidate free tier usage
+        onSuccess?.();
+      },
+      onError: (error) => {
+        toast.error(error.message);
+        // TODO: Check if error code is "FORBIDDEN", redirect to "/upgrade"
+      },
+    }),
+  );
+
+  const updateAgent = useMutation(
+    trpc.agents.update.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(
+          trpc.agents.getMany.queryOptions({}),
         );
         if (initialValues?.id) {
           await queryClient.invalidateQueries(
-            trpc.agents.getOne.queryOptions({ id: initialValues.id })
+            trpc.agents.getOne.queryOptions({ id: initialValues.id }),
           );
         }
         onSuccess?.();
       },
       onError: (error) => {
         toast.error(error.message);
-        // TODO: check if error.data?.code === "FORBIDDEN" and redirect to /upgrade
       },
-    })
+    }),
   );
 
   const form = useForm<z.infer<typeof agentsInsertSchema>>({
@@ -61,12 +76,12 @@ export const AgentForm = ({ onSuccess, onCancel, initialValues }: AgentFormProps
     },
   });
 
-  const isUpdate = !!initialValues?.id;
-  const isPending = createAgent.isPending;
+  const isEdit = !!initialValues?.id;
+  const isPending = createAgent.isPending || updateAgent.isPending;
 
   const onSubmit = (values: z.infer<typeof agentsInsertSchema>) => {
-    if (isUpdate) {
-      console.log("TODO: updateAgent");
+    if (isEdit) {
+      updateAgent.mutate({ ...values, id: initialValues.id });
     } else {
       createAgent.mutate(values);
     }
@@ -123,7 +138,7 @@ export const AgentForm = ({ onSuccess, onCancel, initialValues }: AgentFormProps
             </Button>
           )}
           <Button disabled={isPending} type="submit" className="ml-auto">
-            {isUpdate ? "Update" : "Create"}
+            {isEdit ? "Update" : "Create"}
           </Button>
         </div>
       </form>
