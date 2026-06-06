@@ -80,12 +80,14 @@ function CommandResponsiveDialog({
   children,
   open,
   onOpenChange,
+  shouldFilter = true,
 }: {
   title?: string
   description?: string
   children: React.ReactNode
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  shouldFilter?: boolean
 }) {
   const isMobile = useIsMobile();
 
@@ -97,7 +99,7 @@ function CommandResponsiveDialog({
             <DrawerTitle>{title}</DrawerTitle>
             <DrawerDescription>{description}</DrawerDescription>
           </DrawerHeader>
-          <Command>{children}</Command>
+          <Command shouldFilter={shouldFilter}>{children}</Command>
         </DrawerContent>
       </Drawer>
     );
@@ -113,7 +115,7 @@ function CommandResponsiveDialog({
         className="top-1/3 translate-y-0 overflow-hidden rounded-xl! p-0"
         showCloseButton={false}
       >
-        <Command>{children}</Command>
+        <Command shouldFilter={shouldFilter}>{children}</Command>
       </DialogContent>
     </Dialog>
   );
